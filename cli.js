@@ -19,7 +19,14 @@ const theme = {
   logo: path.join(__dirname, 'theme', 'logo.gif')
 };
 const exercises = [
-  'template-exercise'
+  'introduction-to-terraform',
+  'managing-dns',
+  'managing-access',
+  'aws-basics',
+  'managing-static-file-storage',
+  'managing-servers',
+  'debrief'
+
 ];
 const exercisesDir = path.join(__dirname, 'exercises');
 const template = `
