@@ -1,0 +1,11 @@
+{
+  "name": "s3uploader",
+  "dependencies": {
+    "aws-sdk": "^2.2.46",
+    "dotenv": "^2.0.0",
+    "busboy": "^0.2.13"
+  },
+  "scripts": {
+    "start": "node index"
+  }
+}
