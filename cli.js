@@ -20,9 +20,8 @@ const theme = {
 };
 const exercises = [
   'introduction-to-terraform',
+  'introduction-to-aws',
   'managing-dns',
-  'managing-access',
-  'aws-basics',
   'managing-static-file-storage',
   'managing-servers',
   'debrief'
