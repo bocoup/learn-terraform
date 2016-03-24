@@ -49,8 +49,10 @@ will choose evenly from what is available or evenly within priority group order
 if supported by the record type.
 
 ## /etc/resolv.conf
-On Linux machines this file contains a list of DNS server IP addresses that 
-your machine will contact to try and resolve record data for domain names.
+On Linux machines this file contains a newline delimited priority ordered list
+of DNS server IP addresses that your machine will contact to try and resolve
+record data for domain names. Permission elevation is required to edit this 
+file.
 
 ## /etc/hosts
 On Linux and Linux based machines this file contains a new line delimited 
@@ -60,10 +62,21 @@ to the DNS servers listed in `/etc/resolv.conf` and will instead be routed to
 the associated IP address. This is particularly useful when testing with a 
 local virtual machine or a remote staging environment that is configured 
 EXACTLY like production; meaning that the server will not even respond to a  
-request unless it comes in with the production domain name.
+request unless it comes in with the production domain name. Permission 
+elevation is required to edit this file, and the changes take effect 
+immediately. An `/etc/hosts` entry looks like this:
+
+```
+127.0.0.1 wakawaka.com
+```
+It should be noted that `/etc/hosts` does not support wildcards or service 
+ports, if you need more fine grained control, you'll have to locally install a 
+real DNS server like `DNSMasq`, configure it as needed, and add the loop back
+IP address (`127.0.0.1`) as the first entry in `/etc/resolv.conf`.
 
 ## Dig
-You can use the dig command to look up the DNS entries for any domain name. 
+You can use the dig command to look up the DNS entries and their TTLs for any 
+domain name. 
 
 ```
 dig google.com
@@ -72,7 +85,6 @@ dig google.com
 By default dig returns a single `A` record from the nameservers that are 
 configured in your machine's `/etc/resolv.conf` file. But you can ask dig to 
 query another nameserver, like an OpenDNS server with the IP `208.67.222.222`:
-
 
 ```
 dig @208.67.222.222 google.com 
@@ -84,8 +96,22 @@ or to list records of a different type:
 dig @208.67.222.222 google.com mx
 ```
 
-## EXERCISE
+You can even check the configured nameservers:
 
+```
+dig google.com ns
+```
+
+Dig will always ask a real DNS server for record data and will not reflect 
+any configuration residing in `/etc/hosts`.
+
+## EXERCISE
+In this exercise you'll experiment with `/etc/hosts` by redirecting 
+requests for `google.com` to `duckduckgo.com`. To accomplish this 
+task you'll have to use `dig` to determine what value to set in `/etc/hosts`.
+You'll know you've succeeded when you try to access `google.com` in a browser
+and are automatically redirected to `duckduckgo.com`. Don't forget to update 
+`/etc/hosts` back to it's initial state after this exercise is complete!
 
 ## LEARNING OBJECTIVES
 
