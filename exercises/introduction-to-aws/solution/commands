@@ -1,0 +1,26 @@
+# log into your AWS account at http://aws.amazon.com
+# browse to https://console.aws.amazon.com/iam/home#users
+# click create new users
+# enter a user name
+# ensure "generate access key for each user" is checked
+# click create
+# click the text "show user credentials"
+# copy creds somewhere handy for reference
+# browse to https://console.aws.amazon.com/iam/home#users
+# find and click on your user
+# under the permissions tab, click the blue button "attach policy"
+# check the box next to the policy "AdministratorAccess"
+# click the blue "attach policy" button in the lower right
+
+# run the following at the terminal
+sudo pip install awscli
+aws configure --profile=personal
+
+# enter access key you saved when creating user
+# enter secret access key you saved when creating user
+# enter default region of us-east-1
+# leave default output format as None and hit enter
+
+aws iam list-users --profile=personal
+
+# if you see your user listed, you did it!
