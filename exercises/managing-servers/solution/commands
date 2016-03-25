@@ -1,10 +1,24 @@
+# visit: https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
+# create a keypair called "default" and save the private key locally
+
+# build the infrastructure
 terraform apply deploy/terraform
-# put IP for new server learn-terraform.com in /etc/hosts
-# for extra credit, manage the DNS yourself
+
+# put IP for new server learn-terraform.com in /etc/hosts and deploy
 ansible-playbook \
   -u ubuntu \
-  --private-key=~/.ssh/YOURKEY.pem \
+  --private-key=~/path/to/default.pem \
   -i learn-terraform.com, \
   ansible/playbook.yml
+
 # browse to http://learn-terraform.com
 # attempt uploading a file
+
+# confirm it wound up in s3:
+aws s3 ls s3://YOUR_BUCKET_NAME/ --profile=YOUR_PROFILE_NAME
+
+# remove the file
+aws s3 rm s3://YOUR_BUCKET_NAME/yourfilename --profile=YOUR_PROFILE_NAME
+
+# destroy the infrastructure
+terraform destroy
