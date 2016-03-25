@@ -1,0 +1,10 @@
+terraform apply deploy/terraform
+# put IP for new server learn-terraform.com in /etc/hosts
+# for extra credit, manage the DNS yourself
+ansible-playbook \
+  -u ubuntu \
+  --private-key=~/.ssh/YOURKEY.pem \
+  -i learn-terraform.com, \
+  ansible/playbook.yml
+# browse to http://learn-terraform.com
+# attempt uploading a file
