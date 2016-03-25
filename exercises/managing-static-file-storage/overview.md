@@ -1,89 +1,120 @@
 # MANAGING STATIC FILE STORAGE
-Most cloud providers offer some form of scalable flat file storage but for 
-this section we're primarily going to focus on Amazon S3, though many of 
-these concepts are valid across providers.
 
-## What is S3
-S3 stands for Simple Storage Service and is Amazon's pay per use storage 
-solution for static files. In addition to being ludicrously cheap it offers 
-fine grained permissions control, making it appropriate for a range of uses. 
+Most cloud providers offer some form of scalable flat file storage. For this
+exercise we will focus on Amazon S3.
 
-S3 bucket names are globally unique, and the storage they provide is flat; 
-meaning that even though several visual S3 browsers give the appearance of 
-buckets containing folders, in actuality the "full path" to a resource on S3 is
-no more than a string based key for the resource.
+## WHAT IS S3
+S3 stands for Simple Storage Service and is Amazon's pay-per-use storage
+solution for static files. In addition to being [ludicrously cheap], it allows
+fine grained permissions control, making it appropriate for a wide range of
+uses.
 
-### Private Buckets
-A private S3 bucket is the appropriate place to store data that your application 
-collects from users or otherwise needs to load from an external source in order
-to function. The environment your application runs in will determine how you 
-can authenticate to the bucket. As we learned in the Introduction to AWS 
-section, roles can be assigned to EC2 servers that allow them to communicate 
-with other intra-AWS resources without the need for credentials. 
-Alternatively AWS offers SDK's for several development environments that allow 
-your application to securely communicate with private S3 buckets.  
+### PUBLIC / PRIVATE ACCESS
+By default, files stored in S3 are private. Quite often, this is desirable. You
+might, for example, store encrypted database backups on S3.
 
-### Web Hosting Buckets
-Since S3 stores static files it's no surprise that many folks utilize it for 
-cost effective web hosting. S3 buckets can be configured for "static website 
-hosting" which will allow the bucket owner to set an index document, an error
-document, and simple redirection rules.  In order for an S3 bucket to host a 
-site the bucket name must match the domain name, so to host the site 
-`www.wakawaka.com` the bucket name would have to be `www.wakawaka.com`. 
+You can also make files publicly readable. This approach is common for storing
+long-lived assets like images. These files can be accessed via URL like so:
 
-If you're hosting a static single page application that uses a router and a 
-single `index.html` file, it's likely you'll have to set your error document to
-the same resource as your index document and let the router handle displaying
-the error page. The downside to this is that your site will not return the `200` 
-http code for routed requests, though this can be [mitigated] by using 
-Cloudfront, Amazon's CDN.
+```
+https://s3.amazonaws.com/<bucket_name>/<file_name>
+```
 
-You can wire up DNS to a bucket by setting a `CNAME` record to the bucket's
-`website_endpoint` value.
+You can also make files in S3 buckets accessible via a custom domain. Here are
+two examples of the same file:
 
-### Redirect Buckets
-Because web hosting buckets can only respond to requests from domains that 
-match the bucket name that makes dealing with multiple subdomains or root 
-domains a bit of a challenge. Fortunately S3 supports a redirect mode that 
-allows requests for subdomains to be appropriately routed. In the case where 
-you wanted your site to mainly be accessed at `www.yoursite.com` and requests
-for `yoursite.com` to be redirected to `www` you'd setup the `www.yoursite.com` 
-bucket with all your site content and setup a `yoursite.com` bucket as a 
-redirect bucket that should send all traffic to the `www.yoursite.com` bucket.
+https://s3.amazonaws.com/static.bocoup.com/img/bocoup.png
+http://static.bocoup.com/img/bocoup.png
 
-### S3 Policies
-As mentioned S3 buckets have many fine grained permissions control options. 
-Aside from role based access, buckets can have policies attached to them that
-specify how requests should be handled and from where and who those requests 
-should be allowed. These policies are written as JSON in Amazon's Access 
-Policy Language (APL). Here is an example of an S3 policy that grants read 
-access to anyone for a bucket:
+Try using `dig` to see what the DNS record for `static.bocoup.com` looks like!
+
+### STATIC FILE HOSTING
+If you were thinking a S3 bucket could be a great place to host a static website
+you would be right! In fact, S3 supports this explicitly by allowing a bucket
+to be configured with an index document, an error document, and simple
+redirection rules.
+
+If you want to host directly from an S3 bucket, you'll have to coordinate the
+bucket name and the domain name. To host `www.wakawaka.com`, for example, your
+S3 bucket should be named `www.wakawaka.com`.
+
+If you're hosting a static single page application that use client-side routing
+and a single `index.html` file, it's likely you'll have to set your error
+document to the same resource as your index document and let the router handle
+displaying the error page.
+
+The downside to this is that your site will not return the `200` http code for
+routed requests, though this can be [mitigated] by using Cloudfront, Amazon's
+CDN. Also, server-side rendering is out of the picture.
+
+Once you have your bucket configured appropriately, you can wire up DNS by
+setting a `CNAME` record to the bucket's `website_endpoint` value.
+
+### REDIRECT BUCKETS
+Because buckets can only respond to requests from domains that match their name,
+supporting subdomains is a bit non-traditional. For example, if you want the
+canonical version of your site be `www.yoursite.com`, you'll want requests made
+to `yoursite.com` to be redirected to `www.yoursite.com`. Thankfully, S3 has a
+purpose built "redirection mode" for buckets. Simply create an empty bucket with
+the name `yoursite.com` and configure it to point to `www.yoursite.com`.
+
+### ACCESS POLICIES
+S3 buckets support fine grained permissions control though an incredibly robust
+policy system. Policies are written as JSON in Amazon's Access Policy Language
+(APL). They can be applied directly to buckets, or indirectly through a number
+of entities (users, roles, etc).
+
+Here is an S3 policy that grants read access to anyone for a bucket:
 
 ```
 {
-  "Version":"2012-10-17",
-  "Statement":[
+  "Version": "2012-10-17",
+  "Statement": [
     {
-      "Sid":"AddPerm",
-      "Effect":"Allow",
+      "Sid": "AddPerm",
+      "Effect": "Allow",
       "Principal": "*",
-      "Action":["s3:GetObject"],
-      "Resource":["arn:aws:s3:::BUCKETNAME/*"]
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::BUCKETNAME/*"]
     }
   ]
 }
 ```
 
-## EXERCISE
-In this exercise you'll use terraform to setup two S3 buckets, one that hosts
-a static website (provided) and another that redirects requests. You'll need to 
-set a liberal policy on the bucket hosting the site to ensure it can be read by 
-anyone on the web. Optionally, if you have a domain or want to buy one you 
-can wire up DNS as well.
+...here is another that limits access to specific IPs:
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "IPDeny",
+      "Effect": "Deny",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:*",
+      "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME_HERE/*",
+      "Condition": {
+        "NotIpAddress": {
+          "aws:SourceIp": "YOUR_CIDR_HERE"
+        }
+      }
+    }
+  ]
+}
+```
 
-You'll know you've succeeded when you can access the static site from a web 
-browser either at the bucket's website endpoint or the domain name that you may
-have chosen to use.
+For more examples, [see Amazon's S3 documentation].
+
+## EXERCISE
+In this exercise you'll use Terraform to create two S3 buckets, one that hosts
+a static website (provided) and another that redirects requests. You'll need to
+set a liberal policy on the bucket hosting the site to ensure it can be read by
+anyone on the web.
+
+You'll know you've succeeded when you can access the static site from a web
+browser either at the bucket's website endpoint, or the domain name that you
+may have chosen to use.
 
 ## LEARNING OBJECTIVES
 
@@ -95,4 +126,6 @@ have chosen to use.
 - What types of S3 buckets can Terraform define as resources?
 - How do you define a bucket policy in Terraform?
 
+[ludicrously cheap]: https://aws.amazon.com/s3/pricing/
 [mitigated]: http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/custom-error-pages.html#custom-error-pages-response-code
+[see Amazon's S3 documentation]: http://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
