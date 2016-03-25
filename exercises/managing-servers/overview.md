@@ -10,7 +10,7 @@ IAM roles
 
 ## LEARNING OBJECTIVES
 
-- How do you find machine images?
+- Where do you find machine image ids?
 - How do you decide what instance size to use?
 - How do you gain root access to a new server?
 - What is a firewall?

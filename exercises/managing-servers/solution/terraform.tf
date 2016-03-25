@@ -1,5 +1,18 @@
+##
+# The prefix we will use for resource names.
+#
 variable "name" { default = "learn-terraform" }
+
+##
+# The fully qualified domain name we will tag our instance with.
+#
 variable "fqdn" { default = "learn-terraform.com" }
+
+##
+# The bucket our application stores files in.
+# S3 buckets share a global namespace across all AWS accounts.
+# You will need to change this to something unique.
+#
 variable "bucket" { default = "learn-terraform-bucket" }
 
 ##
@@ -7,13 +20,13 @@ variable "bucket" { default = "learn-terraform-bucket" }
 #
 provider "aws" {
   region = "us-east-1"
-  profile = "YOUR_PROFILE_HERE"
+  profile = "YOUR_PROFILE_NAME"
 }
 
 ##
 # S3 bucket for holding static data.
 #
-resource "aws_s3_bucket" "learn-terraform" {
+resource "aws_s3_bucket" "main" {
   bucket = "${var.bucket}"
   acl = "private"
 }
@@ -21,7 +34,7 @@ resource "aws_s3_bucket" "learn-terraform" {
 ##
 # EC2 instance (Ubuntu 14.04)
 #
-resource "aws_instance" "learn-terraform" {
+resource "aws_instance" "main" {
   # Ubuntu 14.04 AMI (for us-east-1)
   ami = "ami-fce3c696"
   # A small instance (free tier eligible)
@@ -31,10 +44,10 @@ resource "aws_instance" "learn-terraform" {
   # Instance profiles can be associated with roles, giving a server
   # access to all the AWS resources the role has permissiosn for.
   # This makes it so AWS credentials do not need to be on the machine.
-  iam_instance_profile = "${aws_iam_instance_profile.learn-terraform.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.main.name}"
   # This controls network access to the server.
   vpc_security_group_ids = [
-    "${aws_security_group.learn-terraform.id}",
+    "${aws_security_group.main.id}",
   ]
   tags {
     "Name" = "${var.name}"
@@ -46,7 +59,7 @@ resource "aws_instance" "learn-terraform" {
 ##
 # A role to receive permissions from the IAM policy system.
 #
-resource "aws_iam_role" "learn-terraform" {
+resource "aws_iam_role" "main" {
   name = "${var.name}"
   path = "/"
   assume_role_policy = <<EOF
@@ -67,7 +80,7 @@ EOF
 ##
 # A policy to allow full access to our S3 bucket.
 #
-resource "aws_iam_policy" "learn-terraform-s3-bucket" {
+resource "aws_iam_policy" "s3" {
   name = "${var.name}-s3-bucket"
   path = "/"
   policy = <<EOF
@@ -95,7 +108,7 @@ EOF
 ##
 # A policy to allow reading metadata (like tags) assigned to instances.
 #
-resource "aws_iam_policy" "learn-terraform-read-tags" {
+resource "aws_iam_policy" "read-tags" {
   name = "${var.name}-read-tags"
   path = "/"
   policy = <<EOF
@@ -115,23 +128,23 @@ EOF
 ##
 # Associate policies with our role.
 #
-resource "aws_iam_policy_attachment" "learn-terraform-s3-bucket" {
+resource "aws_iam_policy_attachment" "s3" {
   name = "${var.name}-s3-bucket"
-  roles = ["${aws_iam_role.learn-terraform.id}"]
-  policy_arn = "${aws_iam_policy.learn-terraform-s3-bucket.arn}"
+  roles = ["${aws_iam_role.main.id}"]
+  policy_arn = "${aws_iam_policy.s3.arn}"
 }
-resource "aws_iam_policy_attachment" "learn-terraform-read-tags" {
+resource "aws_iam_policy_attachment" "read-tags" {
   name = "${var.name}-read-tags"
-  roles = ["${aws_iam_role.learn-terraform.id}"]
-  policy_arn = "${aws_iam_policy.learn-terraform-read-tags.arn}"
+  roles = ["${aws_iam_role.main.id}"]
+  policy_arn = "${aws_iam_policy.read-tags.arn}"
 }
 
 ##
 # Associate our role with an instance profile.
 #
-resource "aws_iam_instance_profile" "learn-terraform" {
+resource "aws_iam_instance_profile" "main" {
   name = "${var.name}"
-  roles = ["${aws_iam_role.learn-terraform.id}"]
+  roles = ["${aws_iam_role.main.id}"]
 }
 
 ##
@@ -139,7 +152,7 @@ resource "aws_iam_instance_profile" "learn-terraform" {
 #  - Outbound communication to any IP.
 #  - Inbound SSH and HTTP traffic from any IP.
 #
-resource "aws_security_group" "learn-terraform" {
+resource "aws_security_group" "main" {
   name = "${var.name}"
   egress {
     from_port = 0
@@ -161,4 +174,4 @@ resource "aws_security_group" "learn-terraform" {
   }
 }
 
-output "public_ip" { value = "${aws_instance.learn-terraform.public_ip}" }
+output "public_ip" { value = "${aws_instance.main.public_ip}" }

@@ -3,6 +3,7 @@
   become_method: sudo
   vars:
     base_path: /mnt
+    site_port: 8000
     site_fdqn: # from ec2 instance tags
     site_bucket: # from ec2 instance tags
   tasks:
