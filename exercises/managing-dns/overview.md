@@ -89,22 +89,21 @@ immediately. An `/etc/hosts` entry looks like this:
 127.0.0.1 wakawaka.com
 ```
 
-It should be noted that `/etc/hosts` does not support wildcards or service
-ports, if you need more fine grained control, you'll have to locally install a
-real DNS server like [DNSMasq], configure it as needed, and add the loop back
-IP address (`127.0.0.1`) as the first entry in `/etc/resolv.conf`.
+It should be noted that `/etc/hosts` does not support wildcards. If you need
+finer grained control, you'll have to locally install a real DNS server like
+[DNSMasq], configure it as needed, and make your computer (`127.0.0.1`) the
+first entry in `/etc/resolv.conf`.
 
-## Dig
-You can use the dig command to look up the DNS entries and their TTLs for any
-domain name.
+## INSPECTING DNS WITH DIG
+You can use the dig command to look up DNS entries & their TTLs for any domain.
 
 ```
 dig google.com
 ```
 
-By default dig returns a single `A` record from the nameservers that are
+By default, dig returns a single `A` record from the nameservers that are
 configured in your machine's `/etc/resolv.conf` file. But you can ask dig to
-query another nameserver, like an OpenDNS server with the IP `208.67.222.222`:
+query another nameserver, like [OpenDNS] by using the IP `208.67.222.222`:
 
 ```
 dig @208.67.222.222 google.com
@@ -140,9 +139,10 @@ and are automatically redirected to `duckduckgo.com`. Don't forget to update
 - How can services validate who controls a domain?
 - What is TTL and how is it used by resolvers?
 - How can DNS help with load balancing?
-- How can we fake DNS on our local machines?
-- How do our local machines know which DNS server to communicate with?
-- How can we find out what DNS records exist on a domain?
-- How do you manage DNS entries as terraform resources?
+- How can we "fake" DNS on our local machines?
+- How do our machines know which DNS server to communicate with?
+- How can we discover what DNS records exist on a domain?
+- How do you manage DNS entries as Terraform resources?
 
 [DNSMasq]: http://www.thekelleys.org.uk/dnsmasq/doc.html
+[OpenDNS]: https://www.opendns.com/
