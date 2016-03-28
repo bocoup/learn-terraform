@@ -38,25 +38,27 @@ If you want to host directly from an S3 bucket, you'll have to coordinate the
 bucket name and the domain name. To host `www.wakawaka.com`, for example, your
 S3 bucket should be named `www.wakawaka.com`.
 
-If you're hosting a static single page application that use client-side routing
-and a single `index.html` file, it's likely you'll have to set your error
-document to the same resource as your index document and let the router handle
-displaying the error page.
+If you're hosting a static single page application that uses client-side routing
+it's likely you'll have to set your error document to the same resource as your
+index document. That way when you visit a page that doesn't exist, AWS will
+still serve the index page (the client side router will take care of the rest).
 
 The downside to this is that your site will not return the `200` http code for
-routed requests, though this can be [mitigated] by using Cloudfront, Amazon's
-CDN. Also, server-side rendering is out of the picture.
+most requests, though this can be [mitigated] by using Cloudfront, Amazon's CDN.
+Also, server-side rendering is out of the picture.
 
 Once you have your bucket configured appropriately, you can wire up DNS by
 setting a `CNAME` record to the bucket's `website_endpoint` value.
 
 ### REDIRECT BUCKETS
 Because buckets can only respond to requests from domains that match their name,
-supporting subdomains is a bit non-traditional. For example, if you want the
-canonical version of your site be `www.yoursite.com`, you'll want requests made
-to `yoursite.com` to be redirected to `www.yoursite.com`. Thankfully, S3 has a
-purpose built "redirection mode" for buckets. Simply create an empty bucket with
-the name `yoursite.com` and configure it to point to `www.yoursite.com`.
+supporting subdomains is a bit circuitous. For example, if the canonical version
+of your site should be `www.yoursite.com`, you'll want requests made to
+`yoursite.com` to be redirected to `www.yoursite.com`.
+
+Thankfully, S3 has a purpose built "redirection mode" for buckets. Simply create
+an empty bucket with the name `yoursite.com` and configure it to redirect all
+requests to `www.yoursite.com`.
 
 ### ACCESS POLICIES
 S3 buckets support fine grained permissions control though an incredibly robust
