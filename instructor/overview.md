@@ -13,3 +13,10 @@ machine and bring up a new one in the next exercise.
 The instructor will begin each section by using this overview file as a guide
 to explain the new concept. After fielding any questions, attendees will begin
 development on their own machine.
+
+## introduction-to-aws
+## introduction-to-terraform
+## managing-dns
+## managing-static-file-storage
+## managing-servers
+## debrief
