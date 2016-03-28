@@ -1,7 +1,7 @@
 ##
 # The name of the static site
 #
-variable "rootDomain" { default = "DOMAINNAME.BIZ" }
+variable "rootDomain" { default = "CHANGE.ME" }
 
 ##
 # Authenicate us with AWS
@@ -20,6 +20,19 @@ resource "aws_s3_bucket" "www" {
 
   website {
     # Redirect all requests to the root domain
+  }
+}
+
+##
+# Render S3 Bucket Policy Template
+#
+resource "template_file" "root_bucket_policy" {
+  # @see https://www.terraform.io/docs/providers/template/r/file.html
+  # @see https://www.terraform.io/docs/configuration/interpolation.html
+  template = "${file("${path.module}/s3policy.json.tpl")}"
+
+  vars {
+    # Pass in the root bucket to the template
   }
 }
 

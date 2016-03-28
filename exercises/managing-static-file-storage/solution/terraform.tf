@@ -1,7 +1,7 @@
 ##
 # The name of the static site
 #
-variable "rootDomain" { default = "DOMAINNAME.BIZ" }
+variable "rootDomain" { default = "change.me" }
 
 ##
 # Authenicate us with AWS
@@ -24,12 +24,23 @@ resource "aws_s3_bucket" "www" {
 }
 
 ##
+# Render S3 Bucket Policy Template
+#
+resource "template_file" "root_bucket_policy" {
+  template = "${file("${path.module}/s3policy.json.tpl")}"
+
+  vars {
+    bucket_name = "${var.rootDomain}"
+  }
+}
+
+##
 # S3 bucket to store the site itself
 #
 resource "aws_s3_bucket" "root" {
   bucket = "${var.rootDomain}"
   acl = "public-read"
-  policy = "${file("s3policy.json")}"
+  policy = "${template_file.root_bucket_policy.rendered}"
 
   website {
     index_document = "index.html"
