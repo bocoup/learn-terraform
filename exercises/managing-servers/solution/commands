@@ -2,7 +2,7 @@
 # create a keypair called "default" and save the private key locally
 
 # build the infrastructure
-terraform apply deploy/terraform
+terraform apply
 
 # put IP for new server learn-terraform.com in /etc/hosts and deploy
 ansible-playbook \
