@@ -30,9 +30,9 @@ your credentials in-line, do not check them in to source control!
 Once Terraform is authenticated with a provider, you can use it to manage any
 type of infrastructure there is a corresponding "resource" for.
 
-For example, this configuration will ensure there is a small Ubuntu instance
-running in your AWS infrastructure, with a DNS entry that makes it possible
-to address the machine using `mywebsite.com`.
+For example, this configuration will ensure there is a nano Ubuntu instance
+running in your AWS infrastructure, with a route 53 DNS entry that makes it 
+possible to address the machine using the domain name `mywebsite.com`.
 
 ```
 provider "aws" {
@@ -173,9 +173,9 @@ terraform destroy
 _**Note:** For simplicity, we omitted saving plan files in the exercises above.
 When working with real infrastructure it is advisable to do so by running
 `terraform plan -out planfile`. When applying the planned changes, use the saved
-plan like so: `terraform apply planfile`.
+plan like so: `terraform apply planfile`._
 
-If Terraform sees your infrastructure has changed between the time you made
+_If Terraform sees your infrastructure has changed between the time you made
 the plan and the time you tried to apply it, it will abort, protecting you from
 unexpected infrastructure changes._
 
