@@ -70,9 +70,9 @@ Rather than manually edit this file, you can generate new profile with the
 aws configure --profile=personal
 ```
 
-Many tools including Ansible and Terraform can be made to use AWS profiles by
+Many tools, including Ansible and Terraform can be made to use AWS profiles by
 passing in the `AWS_PROFILE` environment variable, or utilizing built-in profile
-support.
+support via configuration.
 
 ## WHY NOT USE THE CLI FOR EVERYTHING?
 The AWS CLI is incredibly powerful and there's no reason it can't be used to
