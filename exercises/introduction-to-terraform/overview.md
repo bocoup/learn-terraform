@@ -75,7 +75,8 @@ as well.
 
 In order to illustrate how Terraform can version your infrastructure, a series
 of instructions are enumerated below. Open the included `terraform.tf` config
-file for reference and run through the steps below.
+file for reference and run through the steps below. Don't forget to set the 
+AWS profile you want to use in the `terraform.tf` file.
 
 > Note the resources that will be created.
 ```
