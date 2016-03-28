@@ -23,7 +23,7 @@ const exercises = [
   'introduction-to-terraform',
   'managing-dns',
   'managing-static-file-storage',
-  'managing-servers',
+  'managing-servers-on-aws',
   'debrief'
 
 ];
