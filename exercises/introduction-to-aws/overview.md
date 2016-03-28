@@ -4,8 +4,8 @@ granular permissions system for controlling access, and broad set of purpose
 built tools for developers that need to interact with the platform.
 
 Once you have an Amazon AWS account the best place to get familiar with what
-the AWS ecosystem has to offer is via the web based [AWS Console]. For the
-purpose of this exercise we'll be focusing on secure user access.
+the AWS ecosystem has to offer is via the web based [AWS Console]. In this 
+section, we'll be focusing on secure user access.
 
 ## IAM
 The acronym IAM stands for: [Identity and Access Management]. Amazon has a
