@@ -3,6 +3,6 @@
 
 ### How do I start?
 
-1. `npm install -g learn-terraform`
+1. `npm install -g bocoup/learn-terraform`
 4. Wait for the workshop to begin.
 5. Run `learn-terraform`!
