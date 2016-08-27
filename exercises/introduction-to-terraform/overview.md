@@ -1,7 +1,7 @@
 # INTRODUCTION TO TERRAFORM
 
 Terraform is a tool for building, changing, and versioning infrastructure.
-Using it's declarative configuration, you can describe the components needed to
+Using its declarative configuration, you can describe the components needed to
 run a single application or an entire datacenter.
 
 ## PROVIDERS
@@ -31,7 +31,7 @@ Once Terraform is authenticated with a provider, you can use it to manage any
 type of infrastructure there is a corresponding "resource" for.
 
 For example, this configuration will ensure there is a nano Ubuntu instance
-running in your AWS infrastructure, with a route 53 DNS entry that makes it 
+running in your AWS infrastructure, with a route 53 DNS entry that makes it
 possible to address the machine using the domain name `mywebsite.com`.
 
 ```
@@ -75,7 +75,7 @@ as well.
 
 In order to illustrate how Terraform can version your infrastructure, a series
 of instructions are enumerated below. Open the included `terraform.tf` config
-file for reference and run through the steps below. Don't forget to set the 
+file for reference and run through the steps below. Don't forget to set the
 AWS profile you want to use in the `terraform.tf` file.
 
 > Note the resources that will be created.
@@ -133,7 +133,7 @@ terraform apply
 ```
 
 > Delete the user in AWS control panel. Then, uncomment the `aws_iam_policy` and
-> `aws_iam_policy_attachment` blocks. Finally, bring your infrastructure in sync
+> `aws_iam_policy_attachment` blocks in your .tf file. Finally, bring your infrastructure in sync
 > with the new configuration.
 ```
 terraform apply
